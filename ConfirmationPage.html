@@ -1,0 +1,197 @@
+<apex:page standardController="Opportunity"  showHeader="false" sidebar="false" standardStylesheets="false"
+    applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+       
+    <apex:variable var="date" value="{!Opportunity.CloseDate}" />    
+    <!--
+    {!Opportunity.Account}
+    <apex:outputField value="{!opportunity.closeDate}"/>
+    <br/>
+    <apex:outputText value="The formatted time right now is: 
+    {0,date,yyyy.MM.dd G 'at' HH-5:mm:ss z}">
+    <apex:param value="{!NOW()}" />
+    </apex:outputText>
+    <br/> -->
+    
+<html>
+  <style>
+    header,h2
+      {
+          font-family: Georgia, Times, "Times New Roman", serif;
+          background-color: #E0FFA3;
+      }        
+    td.shipto
+      {
+          background-color: #d4e9f1;
+          <!-- USe this to place correct shipping address. -->
+      }
+    p.bt
+      {
+          position:relative;
+          left:18px;
+      }
+    table.items, table.total
+      {
+          position:relative;
+          left:18px;
+          border-collapse:collapse;
+      }
+    td
+      {
+          padding:6px;
+      }
+    td.q
+      {
+          text-align:center;
+      }
+    td.price
+      {
+          text-align:right;
+      }
+    td.acc
+      {
+          <!-- This will be replaced with correct account number. -->
+      }
+    form
+      {
+          float: left;
+          position: relative;
+          left:100px;
+          margin-left: 10px;
+      }
+    header
+      {
+        border: 1px solid #E00000;
+        border-radius:15px;
+      }
+    div
+      {
+          border: 2px solid #a1a1a1;
+          padding: 10px 40px;
+          width: 38%;
+          border-radius:25px;
+      }
+  </style>    
+        
+<header align="center">
+  <h2>
+    {!$User.FirstName}, please review Confirmation of PO#{!opportunity.name} before sending!
+  </h2>
+  <!--You are viewing the {!Opportunity.Account.name} account.<br /><br />-->
+
+  <script>
+    for($j = 0; $j < 36; $j++){document.write("--");}                
+  </script>
+
+  <strong>NOTE: This is how the confirmation will appear to the client:</strong>
+
+  <script>
+    for($j = 0; $j < 36; $j++){document.write("--");}                
+  </script>                   
+</header>
+
+<br />
+
+<body>
+  <div><h4>Confirmation for {!Opportunity.Pro_Audio_Lines__c} PO#{!opportunity.name} </h4>
+    <table cellpadding="8">
+        <!-- <tr>
+          <td>Payment: </td>
+          <td>Sample Terms</td>
+          <td>
+           <form method="post">
+                Which account number to use? <br/>
+                <input type="radio" name="account" value="Harman"> Harman </input><br/>
+                <input type="radio" name="account" value="Tascam"> Tascam </input><br/>
+                <input type="radio" name="account" value="Gator"> Gator </input><br/>
+                <input type="radio" name="account" value="Custom"> Custom: </input>
+                <input type="text" name="account" value="12345"> </input><br/>
+                <input type="submit" name="go" value="Insert"></input>
+            </form>
+           </td>
+        </tr> -->
+        <tr>
+          <td>Sold-To-Name: </td>
+          <td>{!Opportunity.Account.name}</td>
+        </tr>
+        <!-- <tr>
+          <td>Account Number: </td>
+          <td>Sample Account Number</td>
+        </tr> -->
+        <tr>
+          <td>Order date: </td>
+          <td>{!MONTH(date)}/{!DAY(date)}/{!YEAR(date)}  </td>
+        </tr>
+        <tr>
+          <td>Order entered by: </td>
+          <td>{!Opportunity.Owner.FirstName}&nbsp;{!Opportunity.Owner.LastName}</td> 
+        </tr>
+        <tr>
+          <td>PO Number:</td>
+          <td>{!opportunity.name}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+          <td>Shipping Method:</td>
+          <td>{!opportunity.Ship_Via__c}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+          <td>Shipping Address:</td>
+          <td class="shipto">
+              {!Opportunity.Account.name}<br/> 
+              {!Opportunity.Account.ShippingStreet}<br/>
+              {!Opportunity.Account.ShippingCity},&nbsp;
+              {!Opportunity.Account.ShippingState}&nbsp;
+              {!Opportunity.Account.ShippingPostalCode}<br/> 
+                  <!-- <strong>...IS THIS CORRECT?</strong> -->
+          </td>
+        </tr>
+    </table> 
+
+    <br/><br/>
+
+    <table class="items" border="1" cellpadding="8">
+     <tr>
+         <th>Order No.</th>
+         <th>Item</th>
+         <th>Price Each</th>
+         <th>Quantity</th>
+         <th>Ext. Price</th>
+     </tr>
+         
+     <apex:repeat var="oli" value="{!opportunity.OpportunityLineItems}">
+         <tr>
+             <td>{!Opportunity.Name}</td>
+             <td> {!oli.PriceBookEntry.Name} </td> 
+             <td class="price"> ${!ROUND((oli.UnitPrice*1.00),2)}</td>
+             <td class="q"> {!ROUND(oli.Quantity,0)} </td>
+             <td class="price"> ${!ROUND((oli.UnitPrice*oli.Quantity*1.00),2)} </td>
+         </tr>
+     </apex:repeat>
+    </table><br />
+
+    <table class="total" border="1" cellpadding="8"><td bgcolor="#d4e9f1">Total Order Value:</td><td bgcolor="#d4e9f1">&nbsp;&nbsp;<strong>${!ROUND(Opportunity.Amount,2)} USD</strong></td>
+    </table> 
+         
+    <p class="bt">
+      Note: This is an order confirmation sent using information last updated on<apex:outputText value=": {!opportunity.LastModifiedDate}"></apex:outputText> CST<br />
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <i>Please review this confirmation carefully and reply to this email if any information is incorrect.</i><br />
+    </p>
+
+  </div> 
+    
+  <br/> <!--
+  <form action="https://c.na1.visual.force.com/apex/EditConfirmation">
+      <input type="submit" value="Edit Confirmation" />
+  </form>
+  <form action="https://c.na1.visual.force.com/apex/ConfirmationPage">
+      <input type="submit" value="Send to {!Opportunity.Account.name}" />
+  </form> -->
+  <form action="https://na1.salesforce.com/">
+      <input type="submit" value="Back" />
+  </form>
+</body>
+</html>
+
+</apex:page>
